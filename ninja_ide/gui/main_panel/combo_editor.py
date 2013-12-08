@@ -54,6 +54,11 @@ except NameError:
 
 
 class ComboEditor(QWidget):
+    """
+    SIGNALS:
+    @recentTabsModified()
+    @focusGained(PyQt_PyObject)
+    """
 
     def __init__(self, original=False):
         super(ComboEditor, self).__init__()
@@ -110,6 +115,8 @@ class ComboEditor(QWidget):
                 self._show_notification_icon)
             self.connect(neditable, SIGNAL("fileSaved(PyQt_PyObject)"),
                 self._update_symbols)
+            self.connect(neditable, SIGNAL("focusGained()"),
+                self._editor_focus)
 
             # Connect file system signals only in the original
             self.connect(neditable, SIGNAL("fileClosing(PyQt_PyObject)"),
@@ -236,6 +243,9 @@ class ComboEditor(QWidget):
                     icon = QIcon(checker.checker_icon)
                 break
         self.bar.update_item_icon(neditable, icon)
+
+    def _editor_focus(self):
+        self.emit(SIGNAL("focusGained(PyQt_PyObject)"), self)
 
 
 class ActionBar(QFrame):

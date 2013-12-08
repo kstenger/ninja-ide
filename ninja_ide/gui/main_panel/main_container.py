@@ -83,6 +83,7 @@ class _MainContainer(QWidget):
 
         self.splitter = dynamic_splitter.DynamicSplitter()
         self.setAcceptDrops(True)
+        self._split_assistance = split_orientation.SplitOrientation(self)
 
         #documentation browser
         self.docPage = None
@@ -101,6 +102,8 @@ class _MainContainer(QWidget):
 
         self.connect(self, SIGNAL("locateFunction(QString, QString, bool)"),
             self.locate_function)
+        self.connect(self._split_assistance, SIGNAL("selected(QString)"),
+            self.show_split)
 
         IDE.register_service('main_container', self)
 
@@ -130,7 +133,7 @@ class _MainContainer(QWidget):
         ide.place_me_on("main_container", self, "central", top=True)
 
         self.combo_area = combo_editor.ComboEditor(original=True)
-        self.splitter.addWidget(self.combo_area)
+        self.splitter.add_widget(self.combo_area)
         self.stack.addWidget(self.splitter)
 
         self.current_widget = self.combo_area
@@ -530,8 +533,8 @@ class _MainContainer(QWidget):
         self.emit(SIGNAL("currentEditorChanged(QString)"), filename)
 
     def show_split(self, orientation):
-        #TODO
-        pass
+        combo_area = combo_editor.ComboEditor()
+        self.splitter.add_widget(combo_area, orientation=orientation)
 
     def add_editor(self, fileName=None, tabIndex=None):
         ninjaide = IDE.get_service('ide')
@@ -1068,8 +1071,8 @@ class _MainContainer(QWidget):
             ui_tools.print_file(fileName, editorWidget.print_)
 
     def split_assistance(self):
-        dialog = split_orientation.SplitOrientation(self)
-        dialog.show()
+        """Show split assistance."""
+        self._split_assistance.show()
 
     def close_split(self):
         pass

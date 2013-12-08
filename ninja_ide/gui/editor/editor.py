@@ -89,6 +89,7 @@ class Editor(QPlainTextEdit, itab_item.ITabItem):
     cursorPositionChange(int, int)    #row, col
     migrationAnalyzed()
     currentLineChanged(int)
+    focusGained()
     """
 ###############################################################################
 
@@ -633,13 +634,7 @@ class Editor(QPlainTextEdit, itab_item.ITabItem):
 
     def focusInEvent(self, event):
         super(Editor, self).focusInEvent(event)
-        try:
-            #use parent().parent() to Access QTabWidget
-            #First parent() = QStackedWidget, Second parent() = TabWidget
-            #Check for modifications
-            self.parent().parent().focusInEvent(event)
-        except RuntimeError:
-            pass
+        self.emit(SIGNAL("focusGained()"))
 
     def focusOutEvent(self, event):
         """Hide Popup on focus lost."""

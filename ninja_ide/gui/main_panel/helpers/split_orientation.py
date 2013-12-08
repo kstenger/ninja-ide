@@ -4,12 +4,21 @@
 from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QVBoxLayout
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import SIGNAL
 from PyQt4.QtDeclarative import QDeclarativeView
 
 from ninja_ide.tools import ui_tools
 
 
 class SplitOrientation(QDialog):
+
+###############################################################################
+# SplitOrientation SIGNALS
+###############################################################################
+    """
+    selected(QString)
+    """
+###############################################################################
 
     def __init__(self, parent=None):
         super(SplitOrientation, self).__init__(parent,
@@ -26,3 +35,10 @@ class SplitOrientation(QDialog):
         self._root = view.rootObject()
         vbox = QVBoxLayout(self)
         vbox.addWidget(view)
+
+        self.connect(self._root, SIGNAL("selected(QString)"),
+            self._split_selected)
+
+    def _split_selected(self, orientation):
+        self.emit(SIGNAL("selected(QString)"), orientation)
+        self.hide()
