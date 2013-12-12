@@ -67,6 +67,7 @@ class DynamicSplitter(QSplitter):
             self.addWidget(widget)
 
     def _add_more_widgets(self, widget, top, orientation):
+        #current_index = self.count() - 1
         current_index = self.indexOf(self._current_combo_area)
         old_widget = self.widget(current_index)
         dynamic = DynamicSplitter(orientation)
@@ -77,8 +78,10 @@ class DynamicSplitter(QSplitter):
             dynamic.addWidget(widget)
         self.insertWidget(current_index, dynamic)
         dynamic.setSizes([1, 1])
-        self.disconnect(widget, SIGNAL("focusGained(PyQt_PyObject)"),
+        self.disconnect(old_widget, SIGNAL("focusGained(PyQt_PyObject)"),
             self._set_current_widget)
+        self.connect(old_widget, SIGNAL("focusGained(PyQt_PyObject)"),
+                dynamic._set_current_widget)
         self.connect(widget, SIGNAL("focusGained(PyQt_PyObject)"),
                 dynamic._set_current_widget)
         self.connect(dynamic,
@@ -89,9 +92,11 @@ class DynamicSplitter(QSplitter):
 
     def _set_current_widget(self, combo, splitter=None):
         if splitter is None:
+            print 'splitter is none'
             splitter = self
         self._current_splitter = splitter
         self._current_combo_area = combo
+        print 'emit'
         self.emit(
             SIGNAL("currentComboSplitterChanged(PyQt_PyObject, PyQt_PyObject)"),
             combo, self)
