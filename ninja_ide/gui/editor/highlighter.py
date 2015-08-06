@@ -116,6 +116,7 @@ LEXER_MAP = {
     "rst": "rst",
     "c": "c",
     "java": "java",
+    "xml": "xml",
 }
 
 BUILT_LEXERS = {
